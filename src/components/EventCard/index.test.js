@@ -29,6 +29,21 @@ describe("When a event card is created", () => {
     expect(labelElement).toBeInTheDocument();
     expect(monthElement).toBeInTheDocument();
   });
+
+  it("devrait afficher le mois correct", () => {
+    const testDate = new Date("2025-04-01"); 
+    render(
+      <EventCard
+        imageSrc="http://src-image"
+        imageAlt="image-alt-text"
+        date={testDate}
+        title="test event"
+        label="test label"
+      />
+    );
+    const monthElement = screen.getByText(/avril/); 
+    expect(monthElement).toBeInTheDocument(); 
+  });
   describe("with small props", () => {
     it("a modifier small is added", () => {
       render(
