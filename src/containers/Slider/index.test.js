@@ -42,3 +42,4 @@ describe("When slider is created", () => {
     );
   });
 });
+
