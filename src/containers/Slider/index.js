@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
 
@@ -7,47 +7,51 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
-
-  const byDateDesc = data?.focus
-    .slice()
-    .sort((evtA, evtB) => new Date(evtB.date) - new Date(evtA.date));
+  const byDateDesc = useMemo(() => {
+    if (!data?.focus) return [];
+    return [...data.focus].sort((evtA, evtB) =>
+      new Date(evtA.date) > new Date(evtB.date) ? -1 : 1
+    );
+  }, [data]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIndex((prevIndex) =>
-        prevIndex < byDateDesc.length - 1 ? prevIndex + 1 : 0
+    const interval = setInterval(() => {
+      setIndex((prev) =>
+        prev < byDateDesc.length - 1 ? prev + 1 : 0
       );
     }, 5000);
-
-    return () => clearTimeout(timeout);
-  }, [index, byDateDesc?.length]);
-
-  if (!byDateDesc || byDateDesc.length === 0) return null;
-
-  const currentEvent = byDateDesc[index];
+    return () => clearInterval(interval);
+  }, [byDateDesc.length]);
 
   return (
     <div className="SlideCardList">
-      <div className="SlideCard SlideCard--display" key={currentEvent.title}>
-        <img src={currentEvent.cover} alt="forum" />
-        <div className="SlideCard__descriptionContainer">
-          <div className="SlideCard__description">
-            <h3>{currentEvent.title}</h3>
-            <p>{currentEvent.description}</p>
-            <div>{getMonth(new Date(currentEvent.date))}</div>
+      {byDateDesc?.map((event, idx) => (
+        <div
+          key={event.id || event.title || idx}
+          className={`SlideCard SlideCard--${
+            index === idx ? "display" : "hide"
+          }`}
+        >
+          <img src={event.cover} alt="forum" />
+          <div className="SlideCard__descriptionContainer">
+            <div className="SlideCard__description">
+              <h3>{event.title}</h3>
+              <p>{event.description}</p>
+              <div>{getMonth(new Date(event.date))}</div>
+            </div>
           </div>
         </div>
-      </div>
+      ))}
 
-     
+      
       <div className="SlideCard__paginationContainer">
         <div className="SlideCard__pagination">
-          {byDateDesc.map((event) => (
+          {byDateDesc?.map((paginationEvent, radioIdx) => (
             <input
-              key={event.id}
+              key={paginationEvent.id || radioIdx}
               type="radio"
               name="radio-button"
-              checked={index === byDateDesc.indexOf(event)}
+              checked={index === radioIdx}
               readOnly
             />
           ))}
@@ -57,4 +61,4 @@ const Slider = () => {
   );
 };
 
-export default Slider;
+export default Slider
