@@ -7,6 +7,7 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
+  
   const byDateDesc = useMemo(() => {
     if (!data?.focus) return [];
     return [...data.focus].sort((evtA, evtB) =>
