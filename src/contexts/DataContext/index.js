@@ -36,8 +36,8 @@ export const DataProvider = ({ children }) => {
 }, [data, getData]);
 
 const last = 
-data?.focus?.length > 0
-? [...data.focus].sort((a,b) => new Date(b.date) - new Date(a.date)) [0]
+data?.events?.length > 0
+? [...data.events].sort((a,b) => new Date(b.date) - new Date(a.date)) [0]
 : null;
   
   return (
